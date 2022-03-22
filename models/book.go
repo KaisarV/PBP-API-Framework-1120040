@@ -12,11 +12,11 @@ type Book struct {
 type BooksResponse struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
-	Data    []Book `json:"data"`
+	Data    []Book `json:"data,omitempty"`
 }
 
 type BookResponse struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
-	Data    Book   `json:"data"`
+	Data    Book   `json:"data,omitempty"`
 }

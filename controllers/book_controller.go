@@ -10,7 +10,6 @@ import (
 )
 
 func GetAllBooks(c *gin.Context) {
-
 	db := connect()
 	var response model.BooksResponse
 	defer db.Close()
@@ -143,6 +142,71 @@ func InsertBook(c *gin.Context) {
 		response.Status = 400
 		response.Message = "Error Insert Data"
 		log.Println(errQuery.Error())
+	}
+
+	c.JSON(response.Status, response)
+}
+
+func UpdateBooks(c *gin.Context) {
+	db := connect()
+
+	var book model.Book
+	var response model.BookResponse
+
+	bookId := c.Param("id")
+	book.Title = c.PostForm("title")
+	book.Author = c.PostForm("author")
+	book.Description = c.PostForm("desc")
+	book.Price, _ = strconv.Atoi(c.PostForm("price"))
+	book.Rating, _ = strconv.Atoi(c.PostForm("rating"))
+
+	rows, _ := db.Query("SELECT * FROM books WHERE id = ?", bookId)
+	var prevDatas []model.Book
+	var prevData model.Book
+
+	for rows.Next() {
+		if err := rows.Scan(&prevData.ID, &prevData.Title, &prevData.Author, &prevData.Description, &prevData.Price, &prevData.Rating); err != nil {
+			log.Println(err.Error())
+		} else {
+			prevDatas = append(prevDatas, prevData)
+		}
+	}
+
+	if len(prevDatas) > 0 {
+		if book.Title == "" {
+			book.Title = prevDatas[0].Title
+		}
+		if book.Author == "" {
+			book.Author = prevDatas[0].Author
+		}
+		if book.Description == "" {
+			book.Description = prevDatas[0].Description
+		}
+		if book.Price == 0 {
+			book.Price = prevDatas[0].Price
+		}
+		if book.Rating == 0 {
+			book.Rating = prevDatas[0].Rating
+		}
+
+		_, errQuery := db.Exec(`UPDATE books SET Title = ?, Author = ?, Description = ?, Price = ?, Rating = ? WHERE id = ?`, book.Title, book.Author, book.Description, book.Price, book.Rating, bookId)
+
+		if errQuery == nil {
+			response.Status = 200
+			response.Message = "Success Update Data"
+			id, _ := strconv.Atoi(bookId)
+			book.ID = id
+			response.Data = book
+
+		} else {
+			response.Status = 400
+			response.Message = "Error Update Data"
+
+			log.Println(errQuery)
+		}
+	} else {
+		response.Status = 400
+		response.Message = "Data Not Found"
 	}
 
 	c.JSON(response.Status, response)
