@@ -147,67 +147,66 @@ func InsertUser(c *gin.Context) {
 	c.JSON(response.Status, response)
 }
 
-// func UpdateBooks(c *gin.Context) {
-// 	db := connect()
+func UpdateUsers(c *gin.Context) {
+	db := connect()
 
-// 	var book model.Book
-// 	var response model.BookResponse
+	var user model.User
+	var response model.UserResponse
 
-// 	bookId := c.Param("id")
-// 	book.Title = c.PostForm("title")
-// 	book.Author = c.PostForm("author")
-// 	book.Description = c.PostForm("desc")
-// 	book.Price, _ = strconv.Atoi(c.PostForm("price"))
-// 	book.Rating, _ = strconv.Atoi(c.PostForm("rating"))
+	userId := c.Param("id")
+	user.Name = c.PostForm("author")
+	user.Address = c.PostForm("desc")
+	user.Email = c.PostForm("email")
+	user.Password = c.PostForm("password")
+	user.UserType, _ = strconv.Atoi(c.PostForm("usertype"))
 
-// 	rows, _ := db.Query("SELECT * FROM books WHERE id = ?", bookId)
-// 	var prevDatas []model.Book
-// 	var prevData model.Book
+	rows, _ := db.Query("SELECT * FROM users WHERE id = ?", userId)
+	var prevDatas []model.User
+	var prevData model.User
 
-// 	for rows.Next() {
-// 		if err := rows.Scan(&prevData.ID, &prevData.Title, &prevData.Author, &prevData.Description, &prevData.Price, &prevData.Rating); err != nil {
-// 			log.Println(err.Error())
-// 		} else {
-// 			prevDatas = append(prevDatas, prevData)
-// 		}
-// 	}
+	for rows.Next() {
+		if err := rows.Scan(&prevData.ID, &prevData.Name, &prevData.Address, &prevData.Email, &prevData.Password, &prevData.UserType); err != nil {
+			log.Println(err.Error())
+		} else {
+			prevDatas = append(prevDatas, prevData)
+		}
+	}
 
-// 	if len(prevDatas) > 0 {
-// 		if book.Title == "" {
-// 			book.Title = prevDatas[0].Title
-// 		}
-// 		if book.Author == "" {
-// 			book.Author = prevDatas[0].Author
-// 		}
-// 		if book.Description == "" {
-// 			book.Description = prevDatas[0].Description
-// 		}
-// 		if book.Price == 0 {
-// 			book.Price = prevDatas[0].Price
-// 		}
-// 		if book.Rating == 0 {
-// 			book.Rating = prevDatas[0].Rating
-// 		}
+	if len(prevDatas) > 0 {
+		if user.Name == "" {
+			user.Name = prevDatas[0].Name
+		}
+		if user.Address == "" {
+			user.Address = prevDatas[0].Address
+		}
+		if user.Email == "" {
+			user.Email = prevDatas[0].Email
+		}
+		if user.Password == "" {
+			user.Password = prevDatas[0].Password
+		}
+		if user.UserType == 0 {
+			user.UserType = prevDatas[0].UserType
+		}
 
-// 		_, errQuery := db.Exec(`UPDATE books SET Title = ?, Author = ?, Description = ?, Price = ?, Rating = ? WHERE id = ?`, book.Title, book.Author, book.Description, book.Price, book.Rating, bookId)
+		_, errQuery := db.Exec(`UPDATE users SET Name = ?, Address = ?, Email = ?, Password = ?, UserType = ? WHERE id = ?`, user.Name, user.Address, user.Email, user.Password, user.UserType, userId)
 
-// 		if errQuery == nil {
-// 			response.Status = 200
-// 			response.Message = "Success Update Data"
-// 			id, _ := strconv.Atoi(bookId)
-// 			book.ID = id
-// 			response.Data = book
+		if errQuery == nil {
+			response.Status = 200
+			response.Message = "Success Update Data"
+			id, _ := strconv.Atoi(userId)
+			user.ID = id
+			response.Data = user
+		} else {
+			response.Status = 400
+			response.Message = "Error Update Data"
 
-// 		} else {
-// 			response.Status = 400
-// 			response.Message = "Error Update Data"
+			log.Println(errQuery)
+		}
+	} else {
+		response.Status = 400
+		response.Message = "Data Not Found"
+	}
 
-// 			log.Println(errQuery)
-// 		}
-// 	} else {
-// 		response.Status = 400
-// 		response.Message = "Data Not Found"
-// 	}
-
-// 	c.JSON(response.Status, response)
-// }
+	c.JSON(response.Status, response)
+}
