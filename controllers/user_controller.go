@@ -88,8 +88,8 @@ func InsertUser(c *gin.Context) {
 	var user model.User
 	var response model.UserResponse
 
-	user.Name = c.PostForm("author")
-	user.Address = c.PostForm("desc")
+	user.Name = c.PostForm("name")
+	user.Address = c.PostForm("address")
 	user.Email = c.PostForm("email")
 	user.Password = c.PostForm("password")
 	user.UserType, _ = strconv.Atoi(c.PostForm("usertype"))
@@ -154,8 +154,8 @@ func UpdateUsers(c *gin.Context) {
 	var response model.UserResponse
 
 	userId := c.Param("id")
-	user.Name = c.PostForm("author")
-	user.Address = c.PostForm("desc")
+	user.Name = c.PostForm("name")
+	user.Address = c.PostForm("address")
 	user.Email = c.PostForm("email")
 	user.Password = c.PostForm("password")
 	user.UserType, _ = strconv.Atoi(c.PostForm("usertype"))

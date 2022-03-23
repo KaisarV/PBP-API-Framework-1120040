@@ -8,8 +8,6 @@ import (
 
 func main() {
 	router := gin.Default()
-
-	//Book
 	router.GET("/books", controller.GetAllBooks)
 	router.DELETE("/books/:id", controller.DeleteBook)
 	router.POST("/books", controller.InsertBook)
@@ -17,6 +15,15 @@ func main() {
 
 	//User
 	router.GET("/users", controller.GetAllUsers)
+	router.DELETE("/users/:id", controller.DeleteUser)
+	router.POST("/users", controller.InsertUser)
+	router.PUT("/users/:id", controller.UpdateUsers)
+
+	//Lendings
+	router.GET("/lendings", controller.GetAllLending)
+	router.DELETE("/lendings/:id", controller.DeleteLending)
+	router.POST("/lendings", controller.InsertLendings)
+	router.PUT("lendings/:id", controller.UpdateLendings)
 
 	router.Run(":8080")
 }
