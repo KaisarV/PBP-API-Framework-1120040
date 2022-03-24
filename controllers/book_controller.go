@@ -25,6 +25,7 @@ func GetAllBooks(c *gin.Context) {
 	if err != nil {
 		response.Status = 400
 		response.Message = err.Error()
+		c.Header("Content-Type", "application/json")
 		c.JSON(400, response)
 		return
 	}
@@ -48,7 +49,7 @@ func GetAllBooks(c *gin.Context) {
 		response.Status = 400
 		response.Message = "Data Not Found"
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
@@ -65,6 +66,7 @@ func DeleteBook(c *gin.Context) {
 	if RowsAffected == 0 {
 		response.Status = 400
 		response.Message = "Book not found"
+		c.Header("Content-Type", "application/json")
 		c.JSON(400, response)
 		return
 	}
@@ -77,7 +79,7 @@ func DeleteBook(c *gin.Context) {
 		response.Message = "Error Delete Data"
 		log.Println(errQuery.Error())
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
@@ -97,6 +99,7 @@ func InsertBook(c *gin.Context) {
 	if book.Title == "" {
 		response.Status = 400
 		response.Message = "Please Insert Book Title"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -104,6 +107,7 @@ func InsertBook(c *gin.Context) {
 	if book.Author == "" {
 		response.Status = 400
 		response.Message = "Please Insert Book Author"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -111,6 +115,7 @@ func InsertBook(c *gin.Context) {
 	if book.Description == "" {
 		response.Status = 400
 		response.Message = "Please Insert Book Description"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -118,6 +123,7 @@ func InsertBook(c *gin.Context) {
 	if book.Price == 0 {
 		response.Status = 400
 		response.Message = "Please Insert Book Price"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -125,6 +131,7 @@ func InsertBook(c *gin.Context) {
 	if book.Rating == 0 {
 		response.Status = 400
 		response.Message = "Please Insert Book Rating"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -143,7 +150,7 @@ func InsertBook(c *gin.Context) {
 		response.Message = "Error Insert Data"
 		log.Println(errQuery.Error())
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
@@ -208,6 +215,6 @@ func UpdateBooks(c *gin.Context) {
 		response.Status = 400
 		response.Message = "Data Not Found"
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }

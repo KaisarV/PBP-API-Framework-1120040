@@ -18,12 +18,12 @@ func GetAllLending(c *gin.Context) {
 
 	bookId := c.Query("bookId")
 	if bookId != "" {
-		query += " WHERE id = " + bookId
+		query += " WHERE l.BookId = " + bookId
 	}
 
-	userId := c.Query("idUser")
+	userId := c.Query("userId")
 	if userId != "" {
-		query += " WHERE id = " + userId
+		query += " WHERE UserId = " + userId
 	}
 
 	rows, err := db.Query(query)
@@ -31,6 +31,7 @@ func GetAllLending(c *gin.Context) {
 	if err != nil {
 		response.Status = 400
 		response.Message = err.Error()
+		c.Header("Content-Type", "application/json")
 		c.JSON(400, response)
 		return
 	}
@@ -58,7 +59,7 @@ func GetAllLending(c *gin.Context) {
 		response.Status = 400
 		response.Message = "Data Not Found"
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
@@ -76,6 +77,7 @@ func DeleteLending(c *gin.Context) {
 	if RowsAffected == 0 {
 		response.Status = 400
 		response.Message = "Lending not found"
+		c.Header("Content-Type", "application/json")
 		c.JSON(400, response)
 		return
 	}
@@ -88,7 +90,7 @@ func DeleteLending(c *gin.Context) {
 		response.Message = "Error Delete Data"
 		log.Println(errQuery.Error())
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
@@ -105,6 +107,7 @@ func InsertLendings(c *gin.Context) {
 	if lending.BookId == 0 {
 		response.Status = 400
 		response.Message = "Please Insert Book"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -112,6 +115,7 @@ func InsertLendings(c *gin.Context) {
 	if lending.UserId == 0 {
 		response.Status = 400
 		response.Message = "Please Insert User"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -130,7 +134,7 @@ func InsertLendings(c *gin.Context) {
 		response.Message = "Error Insert Data"
 		log.Println(errQuery.Error())
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
@@ -182,6 +186,6 @@ func UpdateLendings(c *gin.Context) {
 		response.Status = 400
 		response.Message = "Data Not Found"
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }

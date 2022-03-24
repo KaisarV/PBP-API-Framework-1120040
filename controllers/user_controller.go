@@ -26,6 +26,7 @@ func GetAllUsers(c *gin.Context) {
 	if err != nil {
 		response.Status = 400
 		response.Message = err.Error()
+		c.Header("Content-Type", "application/json")
 		c.JSON(400, response)
 		return
 	}
@@ -49,7 +50,7 @@ func GetAllUsers(c *gin.Context) {
 		response.Status = 400
 		response.Message = "Data Not Found"
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
@@ -66,6 +67,7 @@ func DeleteUser(c *gin.Context) {
 	if RowsAffected == 0 {
 		response.Status = 400
 		response.Message = "User not found"
+		c.Header("Content-Type", "application/json")
 		c.JSON(400, response)
 		return
 	}
@@ -78,7 +80,7 @@ func DeleteUser(c *gin.Context) {
 		response.Message = "Error Delete Data"
 		log.Println(errQuery.Error())
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
@@ -98,6 +100,7 @@ func InsertUser(c *gin.Context) {
 	if user.Name == "" {
 		response.Status = 400
 		response.Message = "Please Insert User's Name"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -105,6 +108,7 @@ func InsertUser(c *gin.Context) {
 	if user.Address == "" {
 		response.Status = 400
 		response.Message = "Please Insert User's Address"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -112,6 +116,7 @@ func InsertUser(c *gin.Context) {
 	if user.Email == "" {
 		response.Status = 400
 		response.Message = "Please Insert User's Email"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -119,6 +124,7 @@ func InsertUser(c *gin.Context) {
 	if user.Password == "" {
 		response.Status = 400
 		response.Message = "Please Insert User's Password"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -126,6 +132,7 @@ func InsertUser(c *gin.Context) {
 	if user.UserType == 0 {
 		response.Status = 400
 		response.Message = "Please Insert User's type"
+		c.Header("Content-Type", "application/json")
 		c.JSON(response.Status, response)
 		return
 	}
@@ -144,7 +151,7 @@ func InsertUser(c *gin.Context) {
 		response.Message = "Error Insert Data"
 		log.Println(errQuery.Error())
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
@@ -208,16 +215,25 @@ func UpdateUsers(c *gin.Context) {
 		response.Status = 400
 		response.Message = "Data Not Found"
 	}
-
+	c.Header("Content-Type", "application/json")
 	c.JSON(response.Status, response)
 }
 
 func UserLogin(c *gin.Context) {
 	db := connect()
 	defer db.Close()
+	var response model.ErrorResponse
 
 	name := c.PostForm("name")
 	password := c.PostForm("password")
+
+	if name == "" || password == "" {
+		response.Status = 400
+		response.Message = "Please input name and password"
+
+		c.Header("Content-Type", "application/json")
+		c.JSON(http.StatusOK, response)
+	}
 
 	rows, err := db.Query("SELECT * FROM users WHERE name=? AND password=?",
 		name,

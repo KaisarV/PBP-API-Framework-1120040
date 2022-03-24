@@ -9,25 +9,31 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.GET("/login", controller.UserLogin)
+	router.POST("/login", controller.UserLogin)
 	router.GET("/logout", controller.Logout)
+
+	//1. Admin 2. Basic User
+	admin := router.Group("/")
+	admin.Use(controller.Authenticate(1))
+	{
+		admin.POST("/books", controller.InsertBook)
+		admin.PUT("/books/:id", controller.UpdateBooks)
+		admin.POST("/users", controller.InsertUser)
+
+		//Lending
+		admin.GET("/lendings", controller.GetAllLending)
+		admin.DELETE("/lendings/:id", controller.DeleteLending)
+		admin.POST("/lendings", controller.InsertLendings)
+		admin.PUT("lendings/:id", controller.UpdateLendings)
+	}
 
 	router.GET("/books", controller.GetAllBooks)
 	router.DELETE("/books/:id", controller.DeleteBook)
-	router.POST("/books", controller.InsertBook)
-	router.PUT("/books/:id", controller.UpdateBooks)
 
 	//User
 	router.GET("/users", controller.GetAllUsers)
 	router.DELETE("/users/:id", controller.DeleteUser)
-	router.POST("/users", controller.InsertUser)
 	router.PUT("/users/:id", controller.UpdateUsers)
-
-	//Lendings
-	router.GET("/lendings", controller.GetAllLending)
-	router.DELETE("/lendings/:id", controller.DeleteLending)
-	router.POST("/lendings", controller.InsertLendings)
-	router.PUT("lendings/:id", controller.UpdateLendings)
 
 	router.Run(":8080")
 }
