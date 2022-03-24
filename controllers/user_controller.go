@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -209,4 +210,68 @@ func UpdateUsers(c *gin.Context) {
 	}
 
 	c.JSON(response.Status, response)
+}
+
+func UserLogin(c *gin.Context) {
+	db := connect()
+	defer db.Close()
+
+	name := c.PostForm("name")
+	password := c.PostForm("password")
+
+	rows, err := db.Query("SELECT * FROM users WHERE name=? AND password=?",
+		name,
+		password,
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var user model.User
+	var users []model.User
+
+	for rows.Next() {
+		if err := rows.Scan(&user.ID, &user.Name, &user.Address, &user.Email, &user.Password, &user.UserType); err != nil {
+			log.Print(err.Error())
+		} else {
+			users = append(users, user)
+		}
+	}
+
+	if len(users) == 1 {
+		generateToken(c, user.ID, user.Name, user.UserType)
+		sendSuccessResponse(c)
+	} else {
+		sendErrorResponse(c)
+	}
+}
+
+func Logout(c *gin.Context) {
+	resetUserToken(c)
+	sendSuccessResponse(c)
+}
+
+func sendSuccessResponse(c *gin.Context) {
+	var response model.ErrorResponse
+	response.Status = 200
+	response.Message = "Success"
+	c.Header("Content-Type", "application/json")
+	c.JSON(http.StatusOK, response)
+}
+
+func sendErrorResponse(c *gin.Context) {
+	var response model.ErrorResponse
+	response.Status = 400
+	response.Message = "Failed"
+	c.Header("Content-Type", "application/json")
+	c.JSON(http.StatusBadRequest, response)
+}
+
+func sendUnAuthorizedResponse(c *gin.Context) {
+	var response model.ErrorResponse
+	response.Status = 401
+	response.Message = "Unauthorized Access"
+	c.Header("Content-Type", "application/json")
+	c.JSON(http.StatusUnauthorized, response)
 }

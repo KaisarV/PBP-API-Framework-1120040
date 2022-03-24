@@ -8,6 +8,10 @@ import (
 
 func main() {
 	router := gin.Default()
+
+	router.GET("/login", controller.UserLogin)
+	router.GET("/logout", controller.Logout)
+
 	router.GET("/books", controller.GetAllBooks)
 	router.DELETE("/books/:id", controller.DeleteBook)
 	router.POST("/books", controller.InsertBook)
